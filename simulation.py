@@ -2,14 +2,13 @@ import matplotlib.pyplot as plt
 import math
 from Creature import Creature
 
-population_init = 100000
-birth_rate = 0.45
-death_rate = 0.40
-mutation_factor = 0.01
-disease_factor = 0.005
+population_init = 10000
+birth_rate = 0.05
+mutation_factor = 0.0001
+disease_factor = 0.075
 insane_disease_factor = Creature.MODERATE
 
-deer = Creature(population_init, birth_rate, death_rate, mutation_factor, disease_factor, insane_disease_factor)
+deer = Creature(population_init, birth_rate, mutation_factor, disease_factor, insane_disease_factor)
 
 x, y = [], []
 # simulate out for 1000 steps
@@ -19,7 +18,7 @@ for n in range(1, 1000):
     x.append(n)
     deer.calculate_new_population()
     y.append(deer.get_current_population())
-    #print(deer.get_current_population())
+    # print(deer.get_current_population())
 
 print(y)
 
