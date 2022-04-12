@@ -20,17 +20,30 @@ class Creature:
         self.insane_disease_factor = insane_disease_factor
         self.food_factor = 0
         self.insane_mutation_factor = 0
+        self.EXTINCT = False
+        self.carrying_capacity_factors = self.generate_carrying_capacity_factors()
 
     def get_current_population(self):
         return self.current_population
 
     def calculate_new_population(self):
-        self.current_population = self.current_population + self.cumulative_birth_factors() + self.cumulative_death_factors()
+        self.current_population = self.current_population + self.rate_of_growth()
+        if self.current_population < 4:
+            self.EXTINCT = True
+
+    # rate before limiting factors
+    def rate_of_growth(self):
+        carrying_capacity = self.calculate_carrying_capacity()
+        delta = self.cumulative_birth_factors() + self.cumulative_death_factors()
+        if self.current_population + delta > carrying_capacity:
+            delta = delta * 0.9
+        return delta
 
     # ----------------------------------- B I R T H ---------- F A C T O R S ----------------------------------- #
 
     def cumulative_birth_factors(self):
-        return math.floor(self.factor_birth_rates() + self.factor_mutations())
+        return math.floor(
+            max(self.factor_birth_rates() + self.factor_mutations(), (1.5 + random() * 0.5) * self.current_population))
 
     # for each individual, b more are born.
     def factor_birth_rates(self):
@@ -52,13 +65,14 @@ class Creature:
     def factor_insane_mutations(self):
         rand = random() * random() * random()
         if rand > 0.5:
+            print("INSANE MUTATION")
             self.insane_mutation_factor = self.mutation_factor * 2 * rand
 
     # ----------------------------------- D E A T H ---------- F A C T O R S ----------------------------------- #
 
     def cumulative_death_factors(self):
-        return math.floor(self.factor_accidents() + self.factor_regular_disease() +
-                          self.factor_insane_disease())
+        return math.floor(min(self.factor_accidents() + self.factor_regular_disease() +
+                              self.factor_insane_disease(), -1000000))
         # return self.factor_death_rate() + self.factor_regular_disease() + \
         #        self.factor_insane_disease()
 
@@ -84,16 +98,20 @@ class Creature:
         rand = random() * random() * random() * random() * random() * random()
         if self.insane_disease_factor == self.HIGH:
             if rand > 0.1:
+                print("PANDEMIC")
                 return -rand * p_0
+
             return 0
         rand = rand * random()
         if self.insane_disease_factor == self.MODERATE:
             if rand > 0.1:
+                print("PANDEMIC")
                 return -rand * p_0
             return 0
         rand = rand * random()
         if self.insane_disease_factor == self.LOW:
             if rand > 0.1:
+                print("PANDEMIC")
                 return -rand * p_0
             return 0
 
@@ -103,11 +121,14 @@ class Creature:
         # TODO
         return
 
-    # dP/dt = rP(1 - P/CC)
-    # r is the rate in an unlimited environment
-    def factor_carrying_capacity(self, r):
+    def factor_carrying_capacity(self):
         p_0 = self.current_population
-        return p_0 * (1 + r) * (1 - (p_0 / self.calculate_carrying_capacity()))
+        carrying_capacity = min(self.carrying_capacity_factors)
+        return carrying_capacity
 
-    def calculate_carrying_capacity(self):
-        return 1000000
+    @staticmethod
+    def generate_carrying_capacity_factors():
+        food = 100000
+        habitat = 100000
+        predators = 100000
+        return [food, habitat, predators]
