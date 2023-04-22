@@ -1,0 +1,298 @@
+\documentclass[a4paper]{article}
+
+%%%%%%%% CREATE DOCUMENT STRUCTURE %%%%%%%%
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage{subfig}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{sectsty}
+\usepackage{apacite}
+\usepackage{float}
+\usepackage{titling} 
+\usepackage{blindtext}
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.0, 0.4, 0.0}
+
+%%%%%%%% DOCUMENT %%%%%%%%
+\begin{document}
+
+%%%% Title Page
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} 							% horizontal line and its thickness
+\center 
+ 
+% University
+\textsc{\LARGE JK Laxmipat University}\\[2cm]
+
+% Document info
+\textsc{\Large Computational Engineering Analysis}\\[0.2cm]
+\textsc{\large ES1106}\\[1cm] 										% Course Code
+\HRule \\[0.8cm]
+{ \huge \bfseries Assignment}\\[0.7cm]								% Assignment
+\HRule \\[2cm]
+\large
+\emph{Submitted by:}\\
+Mudit Lodha (2021BTechCSE151)\\[1.5cm]													% Author info
+{\large December 9, 2021}\\[3cm]
+\includegraphics[width=0.8\textwidth]{Logo.jpg}\\[12cm] 	% University logo
+\vfill 
+\end{titlepage}
+
+%%\begin{abstract}
+%%Your abstract.
+%%\end{abstract}
+
+%%%% SECTIONS
+%% Section 1
+\section*{Introduction}
+Populations of all life forms change over time. These can grow or shrink, depending on a multitude of factors. In this assignment, I shall model the populations of an arbitrary life form using differential equations. The only parameters of concern are the birth rates and death rates, and change in life expectancy due to mutations in the scope of this assignment. 
+\section*{Formulation of the problem}
+Let us go over the assumptions first. Let the variable P represent the population at a given instant. The initial population is $P_0$. We assume that for every individual in the population, on average there are B individuals being born and D individuals passing away in a given time span.  So, in a given time period $t$, there are $B*P$ births and $D*P$ deaths.  Now to factor in the life expectancy, we assume that as time goes on, mutations occur in the genes of the population. Hence, the life expectancy increases as they get more acclimatized to the environment and natural selection takes place. We can model this with a constant L, and multiply by t to factor in time. The value of L would be very small, since genetic changes take a long time to occur.   
+Using these variables, we can form the following differential equation:
+$$
+\frac{dP(t)}{dt}= B*P(t) - D*P(t) + L*t
+$$
+\section*{Direct appropriate method to solve the ODE}
+First, let us simplify the terms. The equation is given as follows:
+$$
+\frac{dP(t)}{dt}= B*P(t) - D*P(t) + L*t  \\
+$$
+$$
+\frac{dP(t)}{dt}= (B-D)*P(t) + L*t \\
+$$
+Let k be some constant, where
+$$
+k=B-D 
+$$
+$$
+\frac{dP(t)}{dt}= k*P(t) + L*t \\
+$$
+$$
+\frac{dP(t)}{dt}- k*P(t) = L*t \\
+$$
+
+This is an ODE. So we first find the Integrating Factor
+$$
+I.F. = e^{\int -kdt} \\
+$$
+$$
+ = e^{-kt} \\
+$$
+
+Hence,
+$$
+e^{-kt}*P(t) =  \int L*t*e^{-kt}dt + c \\
+$$
+$$
+e^{-kt}*P(t)=L \int t*e^{-kt}dt + c \\ 
+$$
+
+Integrating by parts:
+$$
+\int t*e^{-kt}dt = t \int e^{-kt} dt - \int (1 * \int e^{-kt}dt)dt \\
+$$
+$$
+= \frac {t*e^{-kt}}{-k} - \frac {e^{-kt}}{k^2} \\
+$$
+
+Putting this result back into the equation:
+$$
+e^{-kt}*P(t) = L [  \frac {t*e^{-kt}}{-k} - \frac {e^{-kt}}{k^2} ] +c \\
+$$
+$$
+e^{-kt}*P(t) = -L [  \frac {t*e^{-kt}}{k} + \frac {e^{-kt}}{k^2} ] +c \\
+$$
+$$
+e^{-kt}*P(t) = -L * e^{-kt} [  \frac {t}{k} + \frac {1}{k^2} ] +c \\
+$$
+$$
+P(t) = -L  (  \frac {t}{k} + \frac {1}{k^2} ) +ce^{kt} \\
+$$
+Substituting k = B-D
+$$
+P(t)= -L ( \frac {t}{B-D} + \frac {1}{(B-D)^2}) + ce^{(B-D)t}
+$$
+$$
+P(t) = \frac {-L}{(B-D)^2}* (1+ (B-D)t) + ce^{(B-D)t}
+$$
+We know that $P(0) = P_0$ \\
+So,
+$$
+P_0 =  \frac {-L}{(B-D)^2}* (1+ (B-D)*0) + ce^{(B-D)(0)}
+$$
+$$
+P_0 =  \frac {-L}{(B-D)^2} + c
+$$
+$$
+c = P_0 + \frac{L}{(B-D)^2}
+$$
+Hence, our final equation is 
+$$
+P(t) = \frac {-L}{(B-D)^2}* (1+ (B-D)*t) + e^{(B-D)t}(P_0 + \frac{L}{(B-D)^2})
+$$
+$$
+P(t) = e^{(B-D)t}(P_0 + \frac{L}{(B-D)^2}) - (1+(B-D)t)\frac{L}{(B-D)^2}
+$$
+$$
+P(t) = e^{(B-D)t}(P_0 + \frac{L}{(B-D)^2}) - \frac{L}{(B-D)^2} - \frac {Lt}{B-D}
+$$
+
+
+
+\section*{Laplace transform}
+$$
+\frac{dP(t)}{dt}= B*P(t) - D*P(t) + L*t  \\
+$$
+$$
+\frac{dP(t)}{dt}= (B-D)*P(t) + L*t \\
+$$
+Let k be some constant, where
+$$
+k=B-D 
+$$
+$$
+\frac{dP(t)}{dt}= k*P(t) + L*t \\
+$$
+Taking Laplace transform of this equation,
+Assume $\bf{P}(s)$ represents the Laplace transform of $P(t)$
+$$
+s* \mathbf{P(s)} - P(0) = k* \mathbf{P(s)} + \frac{L}{s^2}
+$$
+$$
+\mathbf{P(s)} = \frac{\frac{L}{s^2} + P_0}{s-k}
+$$
+Taking partial fraction:
+$$
+\frac{\frac{L}{s^2} + P_0}{s-k} = \frac{A}{s} + \frac{B}{s} + \frac{C}{s-k}
+$$
+Upon solving, we get
+$$
+A = \frac{-L}{k^2}
+$$
+$$
+B = \frac {-L}{k}
+$$
+$$
+C = \frac{L}{k^2} + P_0
+$$
+Putting in the values,
+$$
+\frac{\frac{L}{s^2} + P_0}{s-k}  = \frac{-L}{k^2s} + \frac{-L}{ks} + \frac{\frac{L}{k^2} + P_0}{s-k}
+$$
+$$
+\mathbf{P(s)} = \frac{-L}{k^2s}-\frac{L}{ks^2}+ (\frac{L}{k^2} + P_0)*\frac{1}{s-k}
+$$
+Taking inverse laplace transform, we get
+$$
+P(t) = \frac{-L}{k^2} - \frac{L}t{k}+(\frac{L}{k^2}+P_0)e^{kt}
+$$
+Replacing k=B-D,
+$$
+P(t) = e^{(B-D)t}(P_0 + \frac{L}{(B-D)^2}) - \frac{L}{(B-D)^2} - \frac {Lt}{B-D}
+$$
+This verifies our previous result.
+
+
+
+\section*{Numerical Method}
+$$
+\frac{dP(t)}{dt}= B*P(t) - D*P(t) + L*t  \\
+$$
+$$
+\frac{dP(t)}{dt}= (B-D)*P(t) + L*t \\
+$$
+Let k be some constant, where
+$$
+k=B-D 
+$$
+$$
+\frac{dP(t)}{dt}= k*P(t) + L*t \\
+$$
+$$
+\Delta P(t) = \frac{1}{6} (k_1 + 2k_2 + 2k_3 + k_4) 
+$$
+Taking $h=1$ and $f(t,P)=k*P + L*t$, 
+$$
+k_1 = h*f(t_0,P_0)
+$$
+$$
+k_1 = 1* (k*P_0 + L * 0)
+$$
+$$
+k_1 = k*P_0
+$$
+$$
+k_2 = h * f(t_0+\frac{h}{2}, P_0 + \frac{k_1}{2})
+$$
+$$
+k_2  = 1* ( k*(P_0+\frac{k*P_0}{2}) + \frac{L}{2})
+$$
+$$
+k_2 = kP_0 + \frac{k^2P_0}{2} + \frac{L}{2}
+$$
+$$
+k_3 = h * f(t_0+\frac{h}{2}, P_0 + \frac{k_2}{2})
+$$
+$$
+k_3 = 1* (k(P_0+\frac{1}{2} ( kP_0 + \frac{k^2P_0}{2} + \frac{L}{2}) + \frac{L}{2})
+$$
+$$
+k_3 = kP_0+\frac{k^2P_0}{2} + \frac{k^3P_0}{4} + \frac{kL}{4} + \frac{L}{2}
+$$
+$$
+k_4 = h * f(t_0+h,P_0+k_3)
+$$
+$$
+k_4 = 1 * (k(P_0+kP_0+\frac{k^2P_0}{2} + \frac{k^3P_0}{4} + \frac{kL}{4} + \frac{L}{2}) + L*(1))
+$$
+$$
+k_4 = kP_0+k^2P_0+\frac{k^3P_0}{2} + \frac{k^4P_0}{4} + \frac{k^2L}{4} + \frac{kL}{2}) + L
+$$
+$$
+\Delta P(t) = \frac{1}{6} (k*P_0 + 2(kP_0 + \frac{k^2P_0}{2} + \frac{L}{2}) + 2(kP_0+\frac{k^2P_0}{2} + \frac{k^3P_0}{4} + \frac{kL}{4} + \frac{L}{2}) + kP_0+k^2P_0+\frac{k^3P_0}{2} + \frac{k^4P_0}{4} + \frac{k^2L}{4} + \frac{kL}{2} + L) 
+$$
+$$
+\Delta P(t) = \frac{1}{6} ( 6kP_0 + 3k^2P_0+\frac{3}{4}k^3P_0+\frac{1}{4}k^4P_0+3L+kL+\frac{1}{4}k^2L )
+$$
+$$
+\Delta P(t) = kP_0 + \frac{1}{2}k^2P_0+\frac{1}{8}k^3P_0+\frac{1}{24}k^4P_0+3L+kL+\frac{1}{24}k^2L 
+$$
+Hence the value of $P(t)$ at $t=1$ is
+$$
+P(1) = P_0 +  kP_0 + \frac{1}{2}k^2P_0+\frac{1}{8}k^3P_0+\frac{1}{24}k^4P_0+3L+kL+\frac{1}{24}k^2L 
+$$
+Substituting k = B-D
+$$
+P(1) = P_0 +  (B-D)P_0 + \frac{1}{2}(B-D)^2P_0+\frac{1}{8}(B-D)^3P_0+\frac{1}{24}(B-D)^4P_0+3L+(B-D)L+\frac{1}{24}(B-D)^2L 
+$$
+%%%%%%%% EXTRA TIPS %%%%%%%%
+%% If you want to include an figure
+%%\begin{figure}[H]
+%%\includegraphics[]{Pendulum.jpg}
+%%\caption{Sketch of the pendulum}
+%%\label{fig:pendulum}
+%%\end{figure}
+
+%% You can then reference with \ref{fig:pendulum}
+
+
+%%\newpage
+%%\bibliographystyle{apacite}
+%%\bibliography{sample}
+
+\end{document}
