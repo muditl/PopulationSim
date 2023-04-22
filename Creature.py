@@ -121,7 +121,7 @@ class Creature:
         # TODO
         return
 
-    def factor_carrying_capacity(self):
+    def calculate_carrying_capacity(self):
         p_0 = self.current_population
         carrying_capacity = min(self.carrying_capacity_factors)
         return carrying_capacity
